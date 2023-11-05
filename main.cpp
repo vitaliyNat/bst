@@ -2,12 +2,13 @@
 
 using namespace std;
 
+template <class T>
 class Node {
 public:
     Node* parent;
     Node* leftChild;
     Node* rightChild;
-    int data;
+    T data;
     int id;
 
     Node() {
@@ -17,17 +18,17 @@ public:
         data = 0;
         id = 0;
     }
-    Node(int value) {
+    Node(T value) {
         Node();
         data = value;
     }
 
-    void addLeftChild(int value) {
+    void addLeftChild(T value) {
         leftChild = new Node(value);
         leftChild->parent = this;
     }
 
-    void addRightChild(int value) {
+    void addRightChild(T value) {
         rightChild = new Node(value);
         rightChild->parent = this;
     }
@@ -35,16 +36,17 @@ public:
 
 };
 
+template <class T>
 class BST {
 private:
-    Node* head;
+    Node<T>* head;
     int size;
     int idQty;
     int high;
 
 
 
-    void DFS(Node* node) {
+    void DFS(Node<T>* node) {
         if(node !=head){
         cout << "Value: " << node->data << ". Id: " << node->id <<". Parent: "<<node->parent->data;
         }else{
@@ -69,7 +71,7 @@ public:
         size = 0;
         idQty = 0;
     }
-    BST(int value) {
+    BST(T value) {
         head = new Node(value);
         head->id = idQty;
         size = 1;
@@ -77,13 +79,13 @@ public:
     }
     void add(int value) {
         if (size == 0) {
-            head = new Node(value);
+            head = new Node<T>(value);
             head->id = idQty;
             idQty++;
             size++;
             return;
         }
-        Node* tmp = this->head;
+        Node<T>* tmp = this->head;
         int flag = 0;
         while (flag == 0) {
             if (value < tmp->data) {
@@ -118,7 +120,7 @@ public:
 
     }
 
-    Node* searchNode(int value) {
+    Node<T>* searchNode(int value) {
         auto* tmp = this->head;
         while (tmp != nullptr) {
             if (tmp->data == value) {
@@ -142,7 +144,7 @@ public:
 
 
 
-    void deleteNode(Node* value) {
+    void deleteNode(Node<T>* value) {
 
         auto* tmp = value;
         if ((tmp->leftChild == nullptr || tmp->rightChild == nullptr) && tmp == tmp->parent->leftChild) {
@@ -196,7 +198,7 @@ public:
 
     void BFS() {
 
-        Node* queue = new Node[size];
+        Node<T>* queue = new Node<T>[size];
         int queueQty = 0;
         queue[queueQty] = *head;
         queueQty++;
@@ -220,7 +222,7 @@ public:
     }
 
     void clear() {
-        Node* queue = new Node[size];
+        Node<T>* queue = new Node<T>[size];
         int queueQty = 0;
         queue[queueQty] = *head;
         queueQty++;
@@ -246,7 +248,7 @@ public:
         idQty = 0;
     }
 
-    void calcHeight(Node* node, int floor) {
+    void calcHeight(Node<T>* node, int floor) {
         if (node->rightChild == nullptr && node->leftChild == nullptr) {
             if (high < floor) high = floor;
         }
@@ -273,7 +275,7 @@ public:
 
 int main() {
 
-    auto* first = new BST();
+    auto* first = new BST<int>();
     first->add(10);
     first->add(15);
     first->add(12);
