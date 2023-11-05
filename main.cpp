@@ -40,13 +40,30 @@ private:
     Node* head;
     int size;
     int idQty;
+    int high;
+
+
 
     void DFS(Node* node) {
-        cout << "Value: " << node->data << ". Id: " << node->id << endl;
-        if (node->leftChild) DFS(node->leftChild);
-        if (node->rightChild) DFS(node->rightChild);
+        if(node !=head){
+        cout << "Value: " << node->data << ". Id: " << node->id <<". Parent: "<<node->parent->data;
+        }else{
+            cout << "Value: " << node->data << ". Id: " << node->id <<". Head of BST";
+        }
+        if (node->leftChild) {
+            cout<<". Left Child: " << node->leftChild->data<<". ";}
+        if (node->rightChild) {
+            cout<<". Right Child: " << node->rightChild->data<<". ";}
+        cout<<endl;
+        if (node->leftChild) {
+            DFS(node->leftChild);}
+        if (node->rightChild) {
+            DFS(node->rightChild);}
+
     }
 public:
+
+
     BST() {
         head = nullptr;
         size = 0;
@@ -202,10 +219,51 @@ public:
 
     }
 
-    int height() {
-        int h = 0;
+    void clear() {
+        Node* queue = new Node[size];
+        int queueQty = 0;
+        queue[queueQty] = *head;
+        queueQty++;
+        int visited = 0;
+        auto  tmp = queue[visited];
+        while (visited < queueQty) {
 
+            tmp = queue[visited];
+            if (tmp.leftChild != nullptr) {
+                queue[queueQty] = *tmp.leftChild;
+                queueQty++;
+            }
+            if (tmp.rightChild != nullptr) {
+                queue[queueQty] = *tmp.rightChild;
+                queueQty++;
+            }
+            cout << "Value: " << tmp.data << ". Id: " << tmp.id << endl;
+            visited++;
+            delete& tmp;
+        }
+        size = 0;
+        head = nullptr;
+        idQty = 0;
     }
+
+    void calcHeight(Node* node, int floor) {
+        if (node->rightChild == nullptr && node->leftChild == nullptr) {
+            if (high < floor) high = floor;
+        }
+        if (node->leftChild)  calcHeight(node->leftChild, floor + 1);
+        if (node->rightChild)  calcHeight(node->rightChild, floor + 1);
+    }
+    int height() {
+        calcHeight(head, 1);
+        return high;
+    }
+
+    void toString(){
+        cout<<"Size:" << size<<endl;
+        cout<<"Height: "<<height()<<endl;
+        DFS(head);
+    }
+
 
 
 
@@ -226,11 +284,9 @@ int main() {
     first->add(7);
     first->add(-2);
     first->add(33);
+    first->add(32);
 
-    first->showDFS();
-    first->deleteNode(first->searchNode(35));
-
-    first->showDFS();
+    first->toString();
 
 
 
