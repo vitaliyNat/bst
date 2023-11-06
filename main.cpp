@@ -1,4 +1,5 @@
 #include <iostream>
+#include <chrono>
 
 using namespace std;
 
@@ -47,20 +48,25 @@ private:
 
 
     void DFS(Node<T>* node) {
-        if(node !=head){
-        cout << "Value: " << node->data << ". Id: " << node->id <<". Parent: "<<node->parent->data;
-        }else{
-            cout << "Value: " << node->data << ". Id: " << node->id <<". Head of BST";
+        if (node != head) {
+            cout << "Value: " << node->data << ". Id: " << node->id << ". Parent: " << node->parent->data;
+        }
+        else {
+            cout << "Value: " << node->data << ". Id: " << node->id << ". Head of BST";
         }
         if (node->leftChild) {
-            cout<<". Left Child: " << node->leftChild->data<<". ";}
+            cout << ". Left Child: " << node->leftChild->data << ". ";
+        }
         if (node->rightChild) {
-            cout<<". Right Child: " << node->rightChild->data<<". ";}
-        cout<<endl;
+            cout << ". Right Child: " << node->rightChild->data << ". ";
+        }
+        cout << endl;
         if (node->leftChild) {
-            DFS(node->leftChild);}
+            DFS(node->leftChild);
+        }
         if (node->rightChild) {
-            DFS(node->rightChild);}
+            DFS(node->rightChild);
+        }
 
     }
 public:
@@ -120,7 +126,7 @@ public:
 
     }
 
-    Node<T>* searchNode(int value) {
+    Node<T> * searchNode(int value) {
         auto* tmp = this->head;
         while (tmp != nullptr) {
             if (tmp->data == value) {
@@ -260,10 +266,11 @@ public:
         return high;
     }
 
-    void toString(){
-        cout<<"Size:" << size<<endl;
-        cout<<"Height: "<<height()<<endl;
-        DFS(head);
+    void toString() {
+        cout << "Size:" << size << endl;
+        cout << "Height: " << height() << endl;
+        cout << "Head: " << head->data;
+        //DFS(head);
     }
 
 
@@ -272,23 +279,78 @@ public:
 
 };
 
+int getRandom() {
+    return rand() % 100000;
+}
+
+
 
 int main() {
 
     auto* first = new BST<int>();
-    first->add(10);
-    first->add(15);
-    first->add(12);
-    first->add(5);
-    first->add(30);
-    first->add(25);
-    first->add(35);
-    first->add(7);
-    first->add(-2);
-    first->add(33);
-    first->add(32);
+    const int Qty = 100;
 
-    first->toString();
+
+    //Add begin
+    auto t1 = chrono::high_resolution_clock::now();
+
+
+    for (int i = 0; i < Qty; i++) {
+        first->add(getRandom());
+    }
+
+    auto t2 = chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1);
+    printf("Add  %d elements: Time measured: %.3d nanoseconds.\n", Qty, duration.count());
+
+
+    //Search element
+
+    int hits = 0;
+    t1 = chrono::high_resolution_clock::now();
+
+
+    auto t1_temp = chrono::high_resolution_clock::now();
+    auto t2_temp = chrono::high_resolution_clock::now();
+    auto  duration_temp = std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1);
+
+    long duration_temp_data[Qty];
+    auto worst_duration = std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1);
+
+    for (int i = 0; i < Qty; i++) {
+        t1_temp = chrono::high_resolution_clock::now();
+
+
+        Node<int>* so = first->searchNode(getRandom());
+        if (so != nullptr) {
+            hits++;
+        }
+        delete so;
+
+
+
+
+        t2_temp = chrono::high_resolution_clock::now();
+        duration_temp = std::chrono::duration_cast<std::chrono::nanoseconds>(t2_temp - t1_temp);
+        if (duration_temp > worst_duration) {
+            worst_duration = duration_temp;
+        }
+        duration_temp_data[i] = duration_temp.count();
+
+
+    }
+
+    t2 = chrono::high_resolution_clock::now();
+    long sum = 0;
+
+    for (int i = 0; i < Qty; i++) {
+        sum += duration_temp_data[i];
+    }
+    long average = sum / Qty;
+    duration = std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1);
+    printf("Searched  %d elements from %d : Time measured: %.3d nanoseconds.\n. Average time %.3d. Worst time %.d3", hits, Qty, duration.count(), average, worst_duration.count());
+
+
 
 
 
